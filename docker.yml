@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    yum:
+      name: "*"
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+- hosts: ubuntu
+  become: true
+  roles:
+    - name: ubuntu
+
+- hosts: centos
+  become: true
+  roles:
+    - name: centos

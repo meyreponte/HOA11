@@ -1,0 +1,31 @@
+---
+- name: Install Docker on Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker.io
+    - docker-compose
+
+- name: Start Docker service
+  become: yes
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Build Docker image
+  docker_image:
+    name: ubuntu
+    path: /home/reponte/CPE232_HOA11/docker/
+  failed_when: false
+
+- name: Run Docker container
+  docker_container:
+    name: ubuntu
+    image: ubuntu
+    state: started
+    ports:
+      - "8080:80"
+    restart_policy: always
+  failed_when: false

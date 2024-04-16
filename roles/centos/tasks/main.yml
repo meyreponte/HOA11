@@ -1,0 +1,31 @@
+---
+- name: Install Docker on Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker.io
+    - docker-compose
+
+- name: Create Docker group
+  group:
+    name: docker
+    state: present
+
+- name: Add current user to the docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes
+
+- name: Build Docker Image
+  command: "docker build -t apache-test:1.3 ."
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/bin"
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
